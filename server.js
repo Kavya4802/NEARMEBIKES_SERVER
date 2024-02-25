@@ -111,9 +111,6 @@ const upload = multer({
   },
 });
 app.post("/addbike", upload.single("bikeImg"), addBikeController);
-app.listen(5000, () => {
-  console.log("server started");
-});
 app.get("/getbikes", getBikeController);
 app.get("/getusers", getUserController);
 app.get("/bikes/:id", bikesController);
@@ -146,3 +143,9 @@ app.post("/sendpasswordlink", sendpasswordlinkController);
 
 app.get("/forgotpassword/:id/:tokens", forgotpasswordController);
 app.post("/resetpassword/:id/:tokens", resetpasswordController);
+
+
+app.listen(5001, () => {
+  console.log("server started");
+});
+
