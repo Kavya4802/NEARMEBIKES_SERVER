@@ -49,4 +49,4 @@ const paymentSchema = new mongoose.Schema({
 
 const TransactionDB = mongoose.model("Transactions", paymentSchema);
 
-module.exports = TransactionDB;
+module.exports = {TransactionDB};

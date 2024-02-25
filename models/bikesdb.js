@@ -18,4 +18,5 @@ const BikesSchema = new mongoose.Schema({
     type: String,
   },
 });
-module.exports = mongoose.model("Bike", BikesSchema);
+const Bike = mongoose.model("Bike", BikesSchema);
+module.exports = {Bike};

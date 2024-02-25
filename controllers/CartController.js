@@ -1,3 +1,4 @@
+const {Details} = require("../models/db");
 const getCartItemsController = async (req, res) => {
   const userEmail = req.params.userEmail;
 
