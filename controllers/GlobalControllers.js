@@ -1,3 +1,12 @@
+const {Bike} = require("../models/bikesdb");
+const {TransactionDB} = require("../models/transactiondb");
+const Razorpay = require("razorpay");
+const shortid = require("shortid");
+const moment = require("moment");
+const razorpay = new Razorpay({
+  key_id: "rzp_test_6YWgCz8B9XBA7M",
+  key_secret: "OC5PdOulwyIg6WtWY1tLARGe",
+});
 const fetchBikeDetails = async (bikeId) => {
   try {
     const bikeDetails = await Bike.findById(bikeId); // Assuming you are using mongoose

@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+const {Details} = require("../models/db");
 const registerController = async (req, res) => {
   console.log("Received registration request:", req.body);
 

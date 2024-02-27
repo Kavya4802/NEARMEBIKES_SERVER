@@ -1,3 +1,7 @@
+const {Details} = require("../models/db");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "whfiugfdhfe4f5d716455()*&^%$#@!hdgfsd697825";
+const bcrypt = require("bcryptjs");
 const getUserController = async (req, res) => {
   const token = req.headers.authorization;
 
@@ -7,6 +11,7 @@ const getUserController = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log(decoded);
     const user = await Details.findOne({ email: decoded.email });
 
     if (!user) {
@@ -55,6 +60,7 @@ const forgotpasswordController = async (req, res) => {
     const validUser = await Details.findOne({ _id: id, verifytoken: tokens });
 
     const verifyToken = jwt.verify(tokens, JWT_SECRET);
+   
 
     if (validUser && verifyToken._id) {
       res.status(201).json({ status: 201, validUser });
@@ -80,14 +86,22 @@ const sendpasswordlinkController = async (req, res) => {
       return res.status(404).json({ status: 404, message: "User not found" });
     }
     const tokens = jwt.sign({ _id: userfind._id }, JWT_SECRET, {
-      expiresIn: "120s",
+      expiresIn: "1h",
     });
+    console.log(tokens);
     const setusertoken = await Details.findByIdAndUpdate(
       { _id: userfind._id },
       { verifytoken: tokens },
       { new: true }
     );
-
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'satwikatyam@gmail.com',
+        pass: 'tpetuiptgpjuqbkz'
+      }
+    });
     if (setusertoken) {
       const mailOptions = {
         from: "satwikatyam@gmail.com",

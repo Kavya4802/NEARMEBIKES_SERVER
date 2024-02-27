@@ -1,6 +1,7 @@
 const {Details} = require("../models/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = "whfiugfdhfe4f5d716455()*&^%$#@!hdgfsd697825";
 function checkAdminCriteria(user) {
   return user.email === "satwikatyam@gmail.com";
 }
@@ -13,7 +14,7 @@ const loginController = async (req, res) => {
   }
 
   if (await bcrypt.compare(pwd, user.pwd)) {
-    const token = jwt.sign({ email: user.email }, "thisisasecret");
+    const token = jwt.sign({ email: user.email }, JWT_SECRET);
 
     // Check if the user has admin privileges based on certain criteria
     const isAdmin = checkAdminCriteria(user);
