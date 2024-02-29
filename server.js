@@ -35,6 +35,9 @@ const {
   getOrders,
   fetchBikeDetails,
   updateReturnController,
+  getProfileInfo,
+  updateProfile,
+  generateInvoice
 } = require("./controllers/GlobalControllers");
 
 const { registerController } = require("./controllers/RegisterController");
@@ -75,6 +78,7 @@ app.post("/razorpay", razorPay);
 
 app.post("/save-transaction", savedTransaction);
 app.get("/get-orders/:userEmail", getOrders);
+app.get("/get-profileinfo/:userEmail", getProfileInfo);
 app.get("/api/transactions", transactions);
 
 app.use("/images", express.static(__dirname + "/uploads"));
@@ -122,14 +126,14 @@ app.get("/bikes/:id", bikesController);
 app.put("/api/updateReturnedStatus/:id", updateReturnController);
 app.put("/bikesinfo/:id", upload.single("picture"), bikeInfoController);
 app.delete("/bikesinfo/:id", bikesinfoController);
-
+app.put("/updateprofile/:userEmail",updateProfile);
 app.post("/addtocart/:bikeId/:userEmail", addToCartController);
 app.get("/getcartcount/:userEmail", getcartcountController);
 app.get("/get-cart-items/:userEmail", getCartItemsController);
 app.post("/handleadd/:bikeId/:userEmail", handleaddController);
 app.post("/handlesubtract/:bikeId/:userEmail", handlesubtractController);
 app.delete("/remove-item/:bikeId/:userEmail", removeItemController);
-
+app.get('/generate-invoice/:orderId', generateInvoice);
 app.get("/getusers", getUsersController);
 
 const nodemailer = require("nodemailer");
