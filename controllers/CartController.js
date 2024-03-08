@@ -91,7 +91,7 @@ const addToCartController = async (req, res) => {
     if (index !== -1) {
       // If the bike is already in the cart, update the quantity
       user.cart[index].quantity += 1;
-      console.log(`Quantity of ${bikeId}: ${user.cart[index].quantity}`);
+      // console.log(`Quantity of ${bikeId}: ${user.cart[index].quantity}`);
     } else {
       // If the bike is not in the cart, add it with quantity 1
       user.cart.push({ bikeId, quantity: 1 });

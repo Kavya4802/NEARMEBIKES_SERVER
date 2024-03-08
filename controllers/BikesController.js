@@ -1,7 +1,7 @@
 const {Bike} = require("../models/bikesdb");
 const {Details} = require("../models/db");
 const addBikeController = async (req, res) => {
-  console.log(JSON.parse(req.body.formData));
+  // console.log(JSON.parse(req.body.formData));
   const { brand, model, price, status } = JSON.parse(req.body.formData);
   try {
     const bike = await Bike.create({

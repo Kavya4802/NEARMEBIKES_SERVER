@@ -4,6 +4,7 @@ const Razorpay = require("razorpay");
 const shortid = require("shortid");
 const moment = require("moment");
 const { Details } = require("../models/db");
+const Review = require('../models/review');
 const razorpay = new Razorpay({
   key_id: "rzp_test_6YWgCz8B9XBA7M",
   key_secret: "OC5PdOulwyIg6WtWY1tLARGe",
@@ -48,7 +49,7 @@ const razorPay = async (req, res) => {
     };
 
     const response = await razorpay.orders.create(options);
-    console.log(response);
+    // console.log(response);
 
     res.json({
       id: response.id,
@@ -73,9 +74,8 @@ const savedTransaction = async (req, res) => {
       endDate,
       bikeId,
       bikeName,
+      bikePicture
     } = req.body;
-    // console.log(orderId);
-    // console.log(paymentId);
     const transaction = new TransactionDB({
       orderId,
       paymentId,
@@ -87,6 +87,7 @@ const savedTransaction = async (req, res) => {
       endDate: moment(endDate).format("DD/MM/YY LT"),
       bikeId,
       bikeName,
+      bikePicture
     });
 
     const savedTransaction = await transaction.save();
@@ -153,28 +154,28 @@ const getProfileInfo = async (req, res) => {
     res.status(500).json({ status: "error", error: "Internal Server Error" });
   }
 };
-const updateProfile= async (req, res) => {
+const updateProfile = async (req, res) => {
+  console.log("request:", req.body);
 
   const userEmail = req.params.userEmail;
   try {
-    // Find the existing bike
     const existingBike = await Details.findOne({ email: userEmail }).exec();
-
-    // Construct the update object with only the fields that are provided in the request
     const updateFields = {};
 
-    if (req.body.phno) {
-      updateFields.phno = req.body.phno;
+    if (req.body.no) {
+      updateFields.no = req.body.no;
     }
-    if (req.add) {
-      updateFields.add = req.body.add; // Update picture only if a new file is provided
+    if (req.body.add) {
+      updateFields.add = req.body.add;
     }
 
-    // Merge the existing bike data with the updateFields
     const updatedProfile = { ...existingBike._doc, ...updateFields };
+    const updatedData = await Details.findOneAndUpdate(
+      { email: userEmail },
+      updatedProfile,
+      { new: true }
+    );
 
-    // Perform the update
-    const updatedData = await Details.findOneAndUpdate({ email: userEmail }, updatedProfile, { new: true });
     if (!updatedData) {
       res.status(404).send({
         message: `Cannot update user with email ${userEmail}. Maybe user not found`,
@@ -185,8 +186,9 @@ const updateProfile= async (req, res) => {
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).send({ message: "Error updating user information" });
-  } 
+  }
 };
+
 const transactions = async (req, res) => {
   try {
     const transactions = await TransactionDB.find();
@@ -210,6 +212,59 @@ const updateReturnController = async (req, res) => {
     res.status(500).json({ status: "error" });
   }
 };
+
+const submitReview = async (req, res) => {
+  try {
+    const { rating, bikeId, description, userEmail } = req.body;
+
+    // Check if the bikeId already exists in the database
+    const existingReview = await Review.findOne({ bikeId });
+
+    if (existingReview) {
+      // If the bikeId exists, calculate the new average rating
+      const newAverageRating =
+        (existingReview.rating * existingReview.numReviews + rating) /
+        (existingReview.numReviews + 1);
+
+      // Update the existing entry with the new average rating and increment the number of reviews
+      await Review.findOneAndUpdate(
+        { bikeId },
+        {
+          $set: { rating: newAverageRating },
+          $push: { description: { $each: description }, userEmail: { $each: userEmail } },
+          $inc: { numReviews: 1 },
+        }
+      );
+    } else {
+      // If the bikeId doesn't exist, create a new entry
+      const newReview = new Review({
+        rating,
+        bikeId,
+        description,
+        userEmail,
+        numReviews: 1, // Initialize numReviews to 1 for the new entry
+      });
+
+      // Save the new review to the database
+      await newReview.save();
+    }
+
+    res.status(200).json({ message: 'Review submitted successfully.' });
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const getRatings=async(req,res)=>{
+  try {
+    const ratings = await Review.find({}, 'bikeId rating userEmail description');
+    res.json({ status: 'ok', ratings });
+} catch (error) {
+    console.error('Error fetching bike ratings:', error);
+    res.status(500).json({ status: 'error', error: 'Internal Server Error' });
+}
+}
+
 module.exports = {
   fetchBikeDetails,
   razorPay,
@@ -219,5 +274,7 @@ module.exports = {
   getProfileInfo,
   transactions,
   updateReturnController,
-  generateInvoice
+  generateInvoice,
+  submitReview,
+  getRatings
 };

@@ -41,6 +41,9 @@ const paymentSchema = new mongoose.Schema({
   bikeName: {
     type: String,
   },
+  bikePicture: {
+    type: String,
+  },
   returned: {
     type: Boolean,
     default: false,

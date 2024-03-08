@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const {Details} = require("../models/db");
 const registerController = async (req, res) => {
-  console.log("Received registration request:", req.body);
+  // console.log("Received registration request:", req.body);
 
   const { name, email, pwd, no, add, city, pincode } = req.body;
   var encpwd = await bcrypt.hash(pwd, 10);

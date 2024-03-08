@@ -37,7 +37,9 @@ const {
   updateReturnController,
   getProfileInfo,
   updateProfile,
-  generateInvoice
+  generateInvoice,
+  submitReview,
+  getRatings
 } = require("./controllers/GlobalControllers");
 
 const { registerController } = require("./controllers/RegisterController");
@@ -80,9 +82,9 @@ app.post("/save-transaction", savedTransaction);
 app.get("/get-orders/:userEmail", getOrders);
 app.get("/get-profileinfo/:userEmail", getProfileInfo);
 app.get("/api/transactions", transactions);
-
+app.post("/api/submit-review",submitReview);
+app.get("/bike-ratings",getRatings);
 app.use("/images", express.static(__dirname + "/uploads"));
-
 app.post("/register", registerController);
 app.post("/login", loginController);
 

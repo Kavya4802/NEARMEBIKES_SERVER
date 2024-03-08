@@ -11,7 +11,6 @@ const getUserController = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log(decoded);
     const user = await Details.findOne({ email: decoded.email });
 
     if (!user) {
@@ -88,7 +87,7 @@ const sendpasswordlinkController = async (req, res) => {
     const tokens = jwt.sign({ _id: userfind._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    console.log(tokens);
+    // console.log(tokens);
     const setusertoken = await Details.findByIdAndUpdate(
       { _id: userfind._id },
       { verifytoken: tokens },
